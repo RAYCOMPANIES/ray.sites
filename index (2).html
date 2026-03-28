@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RAY — We Turn Your Audience Into Your Income</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0D0D0D;
+    --bg2: #111111;
+    --bg3: #161616;
+    --gold: #E8A838;
+    --gold-dim: #c4882a;
+    --gold-glow: rgba(232,168,56,0.15);
+    --text: #F5F0E8;
+    --text-dim: #9a9488;
+    --text-muted: #5a5650;
+    --border: rgba(232,168,56,0.12);
+    --border-hover: rgba(232,168,56,0.35);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.7; overflow-x: hidden; cursor: none; }
+
+  .cursor { position: fixed; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.15s ease; }
+  .cursor-ring { position: fixed; width: 32px; height: 32px; border: 1px solid rgba(232,168,56,0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: transform 0.4s ease, width 0.3s, height 0.3s, border-color 0.3s; }
+  body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 48px; height: 48px; border-color: var(--gold); }
+
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: 0.6; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid transparent; transition: border-color 0.3s, background 0.3s; }
+  nav.scrolled { background: rgba(13,13,13,0.92); backdrop-filter: blur(12px); border-color: var(--border); }
+  .nav-logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--gold); letter-spacing: 0.04em; text-decoration: none; position: relative; z-index: 201; }
+  .nav-logo span { display: inline-block; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; margin-left: 4px; margin-bottom: 2px; vertical-align: middle; }
+  .nav-links { display: flex; gap: 36px; align-items: center; }
+  .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { background: var(--gold) !important; color: var(--bg) !important; padding: 10px 22px; border-radius: 4px; font-weight: 600; font-size: 13px !important; letter-spacing: 0.04em; transition: background 0.2s !important; }
+  .nav-cta:hover { background: var(--gold-dim) !important; }
+
+  /* HAMBURGER */
+  .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 201; position: relative; }
+  .hamburger span { display: block; width: 24px; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform 0.35s cubic-bezier(.23,1,.32,1), opacity 0.25s, background 0.2s; }
+  .hamburger.open span { background: var(--gold); }
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* MOBILE MENU — right drawer */
+  .menu-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0);
+    z-index: 199;
+    pointer-events: none;
+    transition: background 0.4s ease;
+  }
+  .menu-backdrop.open {
+    background: rgba(0,0,0,0.6);
+    pointer-events: all;
+    backdrop-filter: blur(4px);
+  }
+  .mobile-menu {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 280px;
+    background: #0f0f0f;
+    border-left: 1px solid var(--border);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    padding: 100px 40px 48px;
+    gap: 0;
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(.23,1,.32,1);
+    box-shadow: -24px 0 80px rgba(0,0,0,0.6);
+  }
+  .mobile-menu.open { transform: translateX(0); }
+
+  .mobile-link {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(232,168,56,0.07);
+    transition: color 0.2s, text-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .mobile-link::after { content: '→'; opacity: 0; transform: translateX(-6px); transition: opacity 0.2s, transform 0.2s; font-size: 12px; color: var(--gold); }
+  .mobile-link:hover { color: var(--text); text-shadow: 0 0 20px rgba(232,168,56,0.3); }
+  .mobile-link:hover::after { opacity: 1; transform: translateX(0); }
+
+  .mobile-cta {
+    margin-top: 32px;
+    background: var(--gold) !important;
+    color: var(--bg) !important;
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 14px 0;
+    text-align: center;
+    font-size: 13px !important;
+    letter-spacing: 0.06em;
+    border-bottom: none !important;
+    justify-content: center !important;
+    text-shadow: none !important;
+  }
+  .mobile-cta::after { display: none !important; }
+  .mobile-cta:hover { background: var(--gold-dim) !important; }
+
+  .mobile-menu-logo {
+    position: absolute;
+    top: 32px; left: 40px;
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  .mobile-divider { display: none; }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 48px 80px; position: relative; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 70% 50%, rgba(232,168,56,0.06) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(232,168,56,0.03) 0%, transparent 60%); }
+  .hero-prism { position: absolute; right: -60px; top: 50%; transform: translateY(-50%); width: 480px; height: 480px; opacity: 0.07; }
+  .hero-content { position: relative; max-width: 820px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hover); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 36px; animation: fadeUp 0.8s ease both; }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)} }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(44px,6vw,88px); font-weight: 900; line-height: 1.0; letter-spacing: -0.03em; margin-bottom: 28px; animation: fadeUp 0.8s 0.1s ease both; }
+  h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: clamp(16px,1.8vw,20px); color: var(--text-dim); max-width: 560px; line-height: 1.6; margin-bottom: 48px; font-weight: 300; animation: fadeUp 0.8s 0.2s ease both; }
+  .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; animation: fadeUp 0.8s 0.3s ease both; }
+  .btn-primary { background: var(--gold); color: var(--bg); padding: 16px 36px; border-radius: 4px; font-weight: 600; font-size: 15px; text-decoration: none; letter-spacing: 0.02em; transition: background 0.2s, transform 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-primary:hover { background: var(--gold-dim); transform: translateY(-1px); }
+  .btn-ghost { color: var(--text-dim); padding: 16px 24px; font-size: 15px; text-decoration: none; letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 8px; transition: color 0.2s; }
+  .btn-ghost:hover { color: var(--text); }
+  .hero-stats { display: flex; gap: 48px; margin-top: 72px; padding-top: 48px; border-top: 1px solid var(--border); animation: fadeUp 0.8s 0.4s ease both; }
+  .stat-num { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)} }
+
+  /* SECTIONS */
+  section { padding: 120px 48px; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .section-label::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
+  h2 { font-family: 'Fraunces', serif; font-size: clamp(32px,4vw,58px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 20px; }
+  h2 em { font-style: italic; color: var(--gold); }
+  .section-sub { font-size: 18px; color: var(--text-dim); font-weight: 300; max-width: 560px; line-height: 1.6; }
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .gold-line { width: 48px; height: 2px; background: var(--gold); margin: 32px 0; }
+
+  /* PROBLEM */
+  .problem { background: var(--bg); }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-top: 72px; align-items: start; }
+  .problem-text h2 { margin-bottom: 24px; }
+  .problem-cards { display: flex; flex-direction: column; gap: 2px; }
+  .problem-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 28px 32px; transition: border-color 0.3s, background 0.3s; position: relative; overflow: hidden; }
+  .problem-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--gold); opacity: 0; transition: opacity 0.3s; }
+  .problem-card:hover { border-color: var(--border-hover); background: #1a1a1a; }
+  .problem-card:hover::before { opacity: 1; }
+  .problem-card h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .problem-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+
+  /* PROCESS */
+  .process { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .process-header { text-align: center; max-width: 640px; margin: 0 auto 80px; }
+  .process-header .section-label { justify-content: center; }
+  .process-header .section-label::before { display: none; }
+  .steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+  .step { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 40px 32px; transition: border-color 0.3s; }
+  .step:hover { border-color: var(--border-hover); }
+  .step-num { font-family: 'Fraunces', serif; font-size: 64px; font-weight: 900; color: rgba(232,168,56,0.08); line-height: 1; margin-bottom: 16px; letter-spacing: -0.04em; }
+  .step h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: var(--gold); }
+  .step p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+
+  /* ZERO */
+  .zero { background: var(--bg); position: relative; overflow: hidden; }
+  .zero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .zero-visual { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 56px; text-align: center; position: relative; overflow: hidden; }
+  .zero-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(232,168,56,0.08) 0%, transparent 70%); }
+  .zero-big { font-family: 'Fraunces', serif; font-size: 96px; font-weight: 900; color: var(--gold); line-height: 1; display: block; position: relative; }
+  .zero-visual p { font-size: 15px; color: var(--text-dim); margin-top: 16px; position: relative; }
+  .zero-points { display: flex; flex-direction: column; gap: 24px; margin-top: 36px; }
+  .zero-point { display: flex; gap: 16px; align-items: flex-start; }
+  .zero-icon { width: 32px; height: 32px; border: 1px solid var(--border-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold); font-size: 14px; margin-top: 2px; }
+  .zero-point h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .zero-point p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+
+  /* WHO */
+  .who { background: var(--bg2); border-top: 1px solid var(--border); }
+  .who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 64px; }
+  .who-card { border-radius: 12px; padding: 40px; border: 1px solid var(--border); }
+  .who-card.yes { background: rgba(232,168,56,0.04); border-color: rgba(232,168,56,0.2); }
+  .who-card.no { background: rgba(255,255,255,0.02); }
+  .who-card h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+  .who-card.yes h3 { color: var(--gold); }
+  .who-card.no h3 { color: var(--text-muted); }
+  .who-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .who-list li { font-size: 15px; color: var(--text-dim); display: flex; gap: 12px; align-items: flex-start; line-height: 1.5; }
+  .who-list li::before { flex-shrink: 0; margin-top: 2px; font-size: 12px; }
+  .who-card.yes .who-list li::before { content: '✦'; color: var(--gold); }
+  .who-card.no .who-list li::before { content: '×'; color: var(--text-muted); }
+
+  /* NICHES */
+  .niches { background: var(--bg); }
+  .niche-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-top: 64px; }
+  .niche-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 32px 24px; text-align: center; transition: border-color 0.3s, transform 0.3s; }
+  .niche-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+  .niche-icon { font-size: 32px; margin-bottom: 14px; display: block; }
+  .niche-card h3 { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; }
+
+  /* ABOUT */
+  .about { background: var(--bg); }
+  .about-inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+  .about-aside { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 48px; position: sticky; top: 100px; }
+  .about-tag { display: inline-block; background: var(--gold-glow); border: 1px solid var(--border-hover); color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 24px; }
+  .about-aside h3 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 16px; }
+  .about-aside p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+  .about-body h2 { margin-bottom: 24px; }
+  .about-body p { font-size: 16px; color: var(--text-dim); line-height: 1.8; margin-bottom: 20px; }
+  .about-body p strong { color: var(--text); font-weight: 600; }
+  .mission-box { background: var(--bg3); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 24px 28px; margin-top: 32px; }
+  .mission-box p { font-family: 'Fraunces', serif; font-size: 20px; font-style: italic; color: var(--text); line-height: 1.5; margin: 0; }
+
+  /* FAQ */
+  .faq { background: var(--bg2); border-top: 1px solid var(--border); }
+  .faq-header { max-width: 560px; margin-bottom: 64px; }
+  .faq-list { max-width: 800px; display: flex; flex-direction: column; gap: 2px; }
+  .faq-item { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.3s; }
+  .faq-item.open { border-color: var(--border-hover); }
+  .faq-q { padding: 24px 28px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 16px; font-weight: 500; color: var(--text); background: var(--bg3); transition: background 0.2s; gap: 16px; }
+  .faq-q:hover { background: #1a1a1a; }
+  .faq-icon { width: 24px; height: 24px; border: 1px solid var(--border-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold); font-size: 16px; transition: transform 0.3s; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-a { padding: 0 28px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s; font-size: 15px; color: var(--text-dim); line-height: 1.7; background: var(--bg3); }
+  .faq-item.open .faq-a { max-height: 300px; padding: 0 28px 24px; }
+
+  /* BLOG */
+  .blog { background: var(--bg2); border-top: 1px solid var(--border); }
+  .blog-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 64px; }
+  .blog-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 36px; transition: border-color 0.3s, transform 0.3s; text-decoration: none; display: block; }
+  .blog-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+  .blog-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; display: block; }
+  .blog-card h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; line-height: 1.3; color: var(--text); margin-bottom: 12px; }
+  .blog-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+  .blog-card .read-more { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gold); margin-top: 20px; font-weight: 500; }
+
+  /* APPLY FORM */
+  .apply { background: var(--bg); position: relative; overflow: hidden; }
+  .apply::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 80% at 50% 100%, rgba(232,168,56,0.05) 0%, transparent 60%); }
+  .apply-inner { position: relative; max-width: 720px; margin: 0 auto; }
+  .apply-header { text-align: center; margin-bottom: 56px; }
+  .apply-header .section-label { justify-content: center; }
+  .apply-header .section-label::before { display: none; }
+  .form-grid { display: flex; flex-direction: column; gap: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group label { font-size: 13px; font-weight: 500; color: var(--text-dim); letter-spacing: 0.03em; }
+  .form-group input, .form-group select, .form-group textarea { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 18px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s, background 0.2s; width: 100%; appearance: none; }
+  .form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9488' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; cursor: pointer; }
+  .form-group select option { background: #1a1a1a; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--border-hover); background: #161616; }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-top: 12px; }
+  .form-checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+  .form-checkbox { display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; color: var(--text-dim); }
+  .form-checkbox input[type="checkbox"] { width: 16px; height: 16px; border: 1px solid var(--border-hover); border-radius: 3px; background: var(--bg3); cursor: pointer; flex-shrink: 0; accent-color: var(--gold); }
+  .form-submit { background: var(--gold); color: var(--bg); border: none; padding: 18px 48px; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 0.02em; transition: background 0.2s, transform 0.2s; margin-top: 8px; }
+  .form-submit:hover { background: var(--gold-dim); transform: translateY(-1px); }
+  .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .form-note { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 16px; }
+
+  /* FOOTER */
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+  .footer-logo { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--gold); }
+  .footer-links { display: flex; gap: 32px; }
+  .footer-links a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+  footer p { font-size: 13px; color: var(--text-muted); }
+
+  /* INSTAGRAM FLOAT */
+  .ig-float { position: fixed; bottom: 32px; right: 32px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); display: flex; align-items: center; justify-content: center; text-decoration: none; z-index: 500; box-shadow: 0 4px 24px rgba(220,39,67,0.35); transition: transform 0.2s, box-shadow 0.2s; }
+  .ig-float:hover { transform: scale(1.1); box-shadow: 0 8px 32px rgba(220,39,67,0.5); }
+  .ig-float svg { width: 26px; height: 26px; fill: white; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--bg3); border: 1px solid var(--border-hover); color: var(--text); padding: 14px 28px; border-radius: 8px; font-size: 14px; z-index: 9999; transition: transform 0.4s cubic-bezier(.23,1,.32,1); white-space: nowrap; pointer-events: none; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { border-color: rgba(255,80,80,0.4); color: #ff8080; }
+
+  /* MOBILE */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    section { padding: 80px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .hero-stats { gap: 32px; }
+    .problem-grid, .zero-inner, .who-grid, .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .niche-grid { grid-template-columns: repeat(2,1fr); }
+    .blog-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .about-aside { position: static; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+    .ig-float { bottom: 20px; right: 20px; width: 50px; height: 50px; }
+  }
+  @media (max-width: 560px) {
+    .steps { grid-template-columns: 1fr; }
+    .niche-grid { grid-template-columns: repeat(2,1fr); }
+    h1 { font-size: 40px; }
+    .mobile-link { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="toast" id="toast"></div>
+
+<!-- Instagram Float — paste your handle below -->
+<a class="ig-float" href="https://instagram.com/YOUR_INSTAGRAM_HANDLE" target="_blank" rel="noopener" aria-label="Instagram">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+</a>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">RAY<span></span></a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#process">How It Works</a>
+    <a href="#faq">FAQ</a>
+    <a href="#blog">Resources</a>
+    <a href="#apply" class="nav-cta">Apply Now →</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU — right drawer -->
+<div class="menu-backdrop" id="menuBackdrop"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-logo">RAY</div>
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#process" class="mobile-link">How It Works</a>
+  <a href="#faq" class="mobile-link">FAQ</a>
+  <a href="#blog" class="mobile-link">Resources</a>
+  <a href="#apply" class="mobile-link mobile-cta">Apply Now →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <svg class="hero-prism" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="200,20 380,340 20,340" stroke="#E8A838" stroke-width="1" fill="none"/>
+    <line x1="200" y1="20" x2="20" y2="340" stroke="#E8A838" stroke-width="0.5" opacity="0.5"/>
+    <line x1="200" y1="20" x2="380" y2="340" stroke="#E8A838" stroke-width="0.5" opacity="0.5"/>
+    <line x1="200" y1="20" x2="380" y2="180" stroke="#E8A838" stroke-width="0.3" opacity="0.3"/>
+    <line x1="200" y1="20" x2="320" y2="340" stroke="#E8A838" stroke-width="0.3" opacity="0.3"/>
+    <line x1="200" y1="20" x2="240" y2="340" stroke="#E8A838" stroke-width="0.3" opacity="0.2"/>
+  </svg>
+  <div class="hero-content">
+    <div class="hero-badge">Revenue Partner Model</div>
+    <h1>Your audience is ready.<br>You just need a <em>product.</em></h1>
+    <p class="hero-sub">RAY builds your digital product from scratch — in 30 days, with zero upfront cost. We share revenue only after you earn. You keep full ownership at the end.</p>
+    <div class="hero-actions">
+      <a href="#apply" class="btn-primary">Apply to Partner With Us →</a>
+      <a href="#process" class="btn-ghost">See how it works ↓</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">30</div><div class="stat-label">Days to launch</div></div>
+      <div class="stat-item"><div class="stat-num">$0</div><div class="stat-label">Upfront cost</div></div>
+      <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Yours at the end</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem reveal" id="problem">
+  <div class="problem-grid">
+    <div class="problem-text">
+      <div class="section-label">The Problem</div>
+      <h2>You've built the audience.<br><em>The money isn't following.</em></h2>
+      <div class="gold-line"></div>
+      <p class="section-sub">Creators with 10k–500k loyal followers in expert niches are still monetizing through brand deals and ad revenue — platforms that own the relationship, cap your income, and keep most of the value. The problem isn't your effort. It's the missing business layer.</p>
+    </div>
+    <div class="problem-cards">
+      <div class="problem-card reveal"><h3>No product, no ownership</h3><p>Your expertise lives in your content — not in something people can buy. Every follower you gain adds nothing to your balance sheet.</p></div>
+      <div class="problem-card reveal"><h3>Too much to build alone</h3><p>Product creation, landing pages, payments, customer support, launch strategy. One person cannot execute all of this well simultaneously.</p></div>
+      <div class="problem-card reveal"><h3>Platforms capture the value</h3><p>Brand deals and AdSense enrich the platforms. You get a cut. A digital product flips that equation — you own the customer relationship entirely.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process reveal" id="process">
+  <div class="process-header">
+    <div class="section-label">How It Works</div>
+    <h2>We build the business.<br><em>You stay the creator.</em></h2>
+    <p class="section-sub">Four phases. Thirty days. One digital product that belongs to you.</p>
+  </div>
+  <div class="steps">
+    <div class="step reveal"><div class="step-num">01</div><h3>Extract</h3><p>We run 2–3 deep sessions with you to pull a product concept from your existing content, your DMs, your audience's questions, and your lived expertise. No guesswork.</p></div>
+    <div class="step reveal"><div class="step-num">02</div><h3>Build</h3><p>Using AI-accelerated workflows, we build the product, the landing page, and the payment infrastructure — in 7–15 days. You review and approve.</p></div>
+    <div class="step reveal"><div class="step-num">03</div><h3>Launch</h3><p>You post. Your existing audience sees it first. First buyers typically arrive within 24–48 hours. We manage support and systems in the background.</p></div>
+    <div class="step reveal"><div class="step-num">04</div><h3>Handoff</h3><p>Once the revenue milestone is hit, our share ends. You own the product, the systems, and the customer list. Every new follower now has real economic value.</p></div>
+  </div>
+</section>
+
+<!-- ZERO -->
+<section class="zero reveal" id="deal">
+  <div class="zero-inner">
+    <div class="zero-visual"><span class="zero-big">$0</span><p>Upfront cost — guaranteed</p></div>
+    <div>
+      <div class="section-label">The Deal</div>
+      <h2>We only earn<br><em>when you do.</em></h2>
+      <p class="section-sub">No retainer. No setup fee. No course to buy. RAY enters a time-bound revenue-share partnership — typically 10–30% depending on scope — and exits once the agreed milestone is reached.</p>
+      <div class="zero-points">
+        <div class="zero-point"><div class="zero-icon">✦</div><div><h4>Zero financial risk for you</h4><p>We absorb all execution risk. If the launch doesn't perform, we don't earn. Our incentive is completely aligned with yours.</p></div></div>
+        <div class="zero-point"><div class="zero-icon">✦</div><div><h4>You keep the majority</h4><p>Our share is capped and time-bound. Once the partnership period ends, 100% of all future revenue is yours to keep.</p></div></div>
+        <div class="zero-point"><div class="zero-icon">✦</div><div><h4>Full ownership at exit</h4><p>The product, the systems, the payment infrastructure, the customer list — all transferred to you at the end of the partnership.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="who reveal" id="who">
+  <div class="section-label">Ideal Partners</div>
+  <h2>RAY is built for a<br><em>specific kind of creator.</em></h2>
+  <div class="who-grid">
+    <div class="who-card yes"><h3>You're a fit if —</h3><ul class="who-list"><li>You have 10k–200k followers in a specific expert niche</li><li>Your audience actively DMs you, comments, and asks where they can learn more</li><li>You're in fitness, finance, business, nutrition, or personal development</li><li>You've thought about selling something but haven't built the infrastructure</li><li>You want ownership and recurring revenue — not another brand deal</li></ul></div>
+    <div class="who-card no"><h3>Not the right fit if —</h3><ul class="who-list"><li>You're a general lifestyle or entertainment creator without a defined niche</li><li>Your engagement is passive — high views, but no real community interaction</li><li>You're looking for a quick payout without building any systems</li><li>You want to remain 100% dependent on platform monetization</li></ul></div>
+  </div>
+</section>
+
+<!-- NICHES -->
+<section class="niches reveal" id="niches">
+  <div class="section-label">Our Focus</div>
+  <h2>Niches where expertise<br><em>has real market value.</em></h2>
+  <div class="niche-grid">
+    <div class="niche-card"><span class="niche-icon">💪</span><h3>Fitness &amp; Body Transformation</h3></div>
+    <div class="niche-card"><span class="niche-icon">📈</span><h3>Personal Finance &amp; Investing</h3></div>
+    <div class="niche-card"><span class="niche-icon">🥗</span><h3>Nutrition &amp; Wellness</h3></div>
+    <div class="niche-card"><span class="niche-icon">🧠</span><h3>Productivity &amp; Self-Development</h3></div>
+    <div class="niche-card"><span class="niche-icon">💼</span><h3>Business &amp; Entrepreneurship</h3></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about reveal" id="about">
+  <div class="about-inner">
+    <div class="about-aside">
+      <div class="about-tag">Our Story</div>
+      <h3>Built to close the gap between audience and income.</h3>
+      <p>RAY was founded on a simple observation: the creators with the most genuine expertise and trust are often the worst monetized. That asymmetry shouldn't exist.</p>
+    </div>
+    <div class="about-body">
+      <div class="section-label">About RAY</div>
+      <h2>We saw the <em>inefficiency.</em><br>We built the fix.</h2>
+      <p>RAY started with one observation: creators with deep expertise and loyal communities were still trading their time for brand deals — a monetization model that enriches platforms, not creators.</p>
+      <p>The problem was never <strong>effort or expertise.</strong> It was the absence of a business execution layer. Building a digital product requires product design, offer architecture, landing pages, payments infrastructure, launch strategy, and customer support — simultaneously. Most creators can't run all of that while also creating content.</p>
+      <p>So we built a team that does exactly that — and structured it as a partnership, not a service. We only succeed when you do. That keeps our incentives honest.</p>
+      <div class="mission-box"><p>"Our mission is to help expert creators convert what they know into what they own."</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq reveal" id="faq">
+  <div class="faq-header"><div class="section-label">FAQ</div><h2>Honest answers<br>to <em>real questions.</em></h2></div>
+  <div class="faq-list">
+    <div class="faq-item"><div class="faq-q">Is this really free to start? <span class="faq-icon">+</span></div><div class="faq-a">Yes — completely. We do not charge upfront. We take a percentage of revenue generated, typically 10–30% depending on the project scope, for a fixed period. After that, you keep 100% of everything.</div></div>
+    <div class="faq-item"><div class="faq-q">What kind of digital product will we build? <span class="faq-icon">+</span></div><div class="faq-a">It depends on your niche and audience. Common formats include ebooks, mini-courses, toolkits, templates, and private community access. We decide together based on what your audience already wants from you — extracted from your DMs, comments, and existing content.</div></div>
+    <div class="faq-item"><div class="faq-q">How long does the whole process take? <span class="faq-icon">+</span></div><div class="faq-a">From onboarding to launch, we target 30 days. Product creation takes 7–15 days. The remaining time is launch preparation, landing page setup, and payment infrastructure. First buyers typically arrive within 24–48 hours of launch.</div></div>
+    <div class="faq-item"><div class="faq-q">How much of my time does this require? <span class="faq-icon">+</span></div><div class="faq-a">We handle the heavy lifting. You'll need 2–3 sessions with us totaling roughly 2–3 hours to share your expertise and sign off on the product direction. Beyond that, your main role is posting the launch content to your audience — you stay the creator.</div></div>
+    <div class="faq-item"><div class="faq-q">What if the launch doesn't perform well? <span class="faq-icon">+</span></div><div class="faq-a">We don't earn if you don't earn — so our incentive is to make it work. If initial results are below expectations, we'll iterate on the product, offer, or launch approach with you. We're in it until the product works.</div></div>
+    <div class="faq-item"><div class="faq-q">Will I own everything at the end? <span class="faq-icon">+</span></div><div class="faq-a">Yes. The product, the systems, the payment infrastructure, and the customer list — all of it transfers to you once the partnership period ends. From that point, every new follower you gain has direct economic value.</div></div>
+    <div class="faq-item"><div class="faq-q">What platforms and tools do you use? <span class="faq-icon">+</span></div><div class="faq-a">We use Framer or Webflow for landing pages, Whop for payments and revenue splitting, and AI-powered workflows for product creation and customer support automation. Everything is handed over to you fully set up.</div></div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="blog reveal" id="blog">
+  <div class="section-label">Resources</div>
+  <h2>Straight talk for<br><em>serious creators.</em></h2>
+  <div class="blog-grid">
+    <a class="blog-card" href="#"><span class="blog-tag">Monetization</span><h3>Why creators with 100k followers make less than they should</h3><p>The structural reason attention doesn't automatically convert to income — and what changes when you own the product.</p><span class="read-more">Read article →</span></a>
+    <a class="blog-card" href="#"><span class="blog-tag">Product Strategy</span><h3>What is a digital product and which one suits your niche?</h3><p>A plain breakdown of the most common digital product formats — and how to match the right one to your audience's buying behavior.</p><span class="read-more">Read article →</span></a>
+    <a class="blog-card" href="#"><span class="blog-tag">Transparency</span><h3>The revenue-share model explained — what RAY actually takes</h3><p>No vague language. Here's exactly how our partnership structure works, what we earn, and when we exit.</p><span class="read-more">Read article →</span></a>
+  </div>
+</section>
+
+<!-- APPLY -->
+<section class="apply reveal" id="apply">
+  <div class="apply-inner">
+    <div class="apply-header">
+      <div class="section-label">Apply</div>
+      <h2>Ready to turn your<br>audience into <em>income?</em></h2>
+      <p class="section-sub" style="margin:16px auto 0;text-align:center;">Takes 5 minutes. We review every application personally and respond within 48 hours to schedule a discovery call.</p>
+    </div>
+    <form class="form-grid" id="applyForm">
+      <div class="form-section-title">A — Creator Basics</div>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="f-name" placeholder="Your full name" required /></div>
+        <div class="form-group"><label>Instagram Handle *</label><input type="text" id="f-instagram" placeholder="@yourhandle" required /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Niche / Area of Expertise *</label><select id="f-niche" required><option value="" disabled selected>Select your niche</option><option>Fitness &amp; Body Transformation</option><option>Personal Finance &amp; Investing</option><option>Nutrition &amp; Wellness</option><option>Productivity &amp; Self-Development</option><option>Business &amp; Entrepreneurship</option><option>Other</option></select></div>
+        <div class="form-group"><label>Current Follower Count *</label><select id="f-followers" required><option value="" disabled selected>Select range</option><option>Under 10k</option><option>10k – 30k</option><option>30k – 100k</option><option>100k – 500k</option><option>Above 500k</option></select></div>
+      </div>
+      <div class="form-group"><label>Average Engagement Rate *</label><select id="f-engagement" required><option value="" disabled selected>Select range</option><option>Below 1%</option><option>1% – 3%</option><option>3% – 6%</option><option>Above 6%</option><option>I don't know</option></select></div>
+
+      <div class="form-section-title">B — Audience Quality</div>
+      <div class="form-group"><label>How active is your audience with you directly? *</label><div class="form-checkbox-group"><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They mostly just watch/like" /> They mostly just watch/like</label><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They comment regularly" /> They comment regularly</label><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They DM me with questions" /> They DM me with questions</label><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They actively ask where they can buy or learn more" /> They actively ask where they can buy or learn more</label></div></div>
+      <div class="form-row">
+        <div class="form-group"><label>Audience Age Range *</label><select id="f-age" required><option value="" disabled selected>Select range</option><option>Mostly 16–22</option><option>Mostly 22–30</option><option>Mostly 30–45</option><option>Mixed / I'm not sure</option></select></div>
+        <div class="form-group"><label>Monthly Content Earnings (optional)</label><select id="f-earnings"><option value="" disabled selected>Select range</option><option>$0 / ₹0</option><option>Under $500 / ₹10,000</option><option>$500–$2,000 / ₹10k–₹50k</option><option>Above $2,000 / ₹50k+</option><option>Prefer not to say</option></select></div>
+      </div>
+      <div class="form-group"><label>Describe your audience in one sentence — who are they and what do they want?</label><textarea id="f-audience-desc" placeholder="e.g. Young professionals aged 22–30 who want to build a fitness habit without a gym membership"></textarea></div>
+
+      <div class="form-section-title">C — Monetization Status</div>
+      <div class="form-group"><label>How are you currently monetizing? (select all that apply)</label><div class="form-checkbox-group"><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="Brand deals / sponsorships" /> Brand deals / sponsorships</label><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="Ad revenue" /> Ad revenue</label><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="I already sell a product or service" /> I already sell a product or service</label><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="I'm not monetizing yet" /> I'm not monetizing yet</label></div></div>
+      <div class="form-group"><label>Have you ever tried selling something to your audience? *</label><select id="f-tried-selling" required><option value="" disabled selected>Select one</option><option>Yes, and it worked</option><option>Yes, but it didn't go well</option><option>No, but I've thought about it</option><option>No, never considered it</option></select></div>
+
+      <div class="form-section-title">D — Product Potential</div>
+      <div class="form-group"><label>What do people most often ask you about in your DMs or comments? *</label><textarea id="f-dm-questions" placeholder="Be specific — this is where your product idea lives" required></textarea></div>
+      <div class="form-group"><label>If you had a product today, what do you think your audience would most likely buy? (optional)</label><textarea id="f-product-idea" placeholder="A course, an ebook, a template, a challenge — anything comes to mind"></textarea></div>
+      <div class="form-group"><label>Do you have existing content covering your area of expertise in depth? *</label><select id="f-existing-content" required><option value="" disabled selected>Select one</option><option>Yes, a lot</option><option>Some, but not extensive</option><option>Not really</option></select></div>
+
+      <div class="form-section-title">E — Fit &amp; Intent</div>
+      <div class="form-group"><label>Why do you want to launch a digital product now? *</label><textarea id="f-intent" placeholder="What's changed, or what's been stopping you until now?" required></textarea></div>
+      <div class="form-group"><label>How much time per week can you commit to this process? *</label><select id="f-time" required><option value="" disabled selected>Select one</option><option>Less than 2 hours</option><option>2–5 hours</option><option>5–10 hours</option><option>More than 10 hours</option></select></div>
+      <div class="form-group"><label>Anything else you'd like us to know? (optional)</label><textarea id="f-extra" placeholder="About you, your audience, your goals — anything relevant"></textarea></div>
+
+      <button type="submit" class="form-submit" id="submitBtn">Submit Application →</button>
+      <p class="form-note">We review every application personally. You'll hear from us within 48 hours.</p>
+    </form>
+    <div id="successMsg" style="display:none;text-align:center;padding:64px 0;">
+      <div style="font-size:48px;margin-bottom:24px;">✦</div>
+      <h3 style="font-family:'Fraunces',serif;font-size:32px;color:var(--gold);margin-bottom:16px;">Application received.</h3>
+      <p style="color:var(--text-dim);font-size:16px;max-width:440px;margin:0 auto;">We review every application personally. Expect to hear from us within 48 hours to schedule a discovery call.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">RAY</div>
+  <div class="footer-links">
+    <a href="#about">About</a><a href="#process">How It Works</a><a href="#faq">FAQ</a><a href="#blog">Resources</a><a href="#apply">Apply</a>
+  </div>
+  <p>© 2026 RAY. All rights reserved.</p>
+</footer>
+
+<script>
+  // ════════════════════════════════════════════
+  // AIRTABLE CONFIG — fill these in after setup
+  // ════════════════════════════════════════════
+  // 1. Go to airtable.com → your base → Help → API documentation → copy Base ID
+  // 2. Go to airtable.com/create/tokens → create token with data.records:write scope → copy it
+  const AIRTABLE_BASE_ID = 'YOUR_BASE_ID';        // starts with "app"
+  const AIRTABLE_TABLE   = 'Applications';          // must match your Airtable table name exactly
+  const AIRTABLE_TOKEN   = 'YOUR_AIRTABLE_TOKEN';  // starts with "pat"
+  // ════════════════════════════════════════════
+
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px';
+  });
+  (function animateRing() {
+    ringX += (mouseX - ringX) * 0.12; ringY += (mouseY - ringY) * 0.12;
+    cursorRing.style.left = ringX + 'px'; cursorRing.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  })();
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(r => io.observe(r));
+
+  // FAQ
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement, isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Hamburger — right drawer
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('menuBackdrop');
+
+  function openMenu() {
+    hamburger.classList.add('open');
+    mobileMenu.classList.add('open');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  backdrop.addEventListener('click', closeMenu);
+  document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', closeMenu));
+
+  // Toast
+  function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  // Form → Airtable
+  document.getElementById('applyForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const fields = {
+      'Name':            document.getElementById('f-name').value,
+      'Instagram':       document.getElementById('f-instagram').value,
+      'Niche':           document.getElementById('f-niche').value,
+      'FollowerCount':   document.getElementById('f-followers').value,
+      'EngagementRate':  document.getElementById('f-engagement').value,
+      'AudienceActivity':[...document.querySelectorAll('.f-audience:checked')].map(c=>c.value).join(', '),
+      'AudienceAge':     document.getElementById('f-age').value,
+      'Earnings':        document.getElementById('f-earnings').value || '',
+      'AudienceDesc':    document.getElementById('f-audience-desc').value,
+      'Monetization':    [...document.querySelectorAll('.f-monetization:checked')].map(c=>c.value).join(', '),
+      'TriedSelling':    document.getElementById('f-tried-selling').value,
+      'DMQuestions':     document.getElementById('f-dm-questions').value,
+      'ProductIdea':     document.getElementById('f-product-idea').value,
+      'ExistingContent': document.getElementById('f-existing-content').value,
+      'Intent':          document.getElementById('f-intent').value,
+      'TimeCommitment':  document.getElementById('f-time').value,
+      'Extra':           document.getElementById('f-extra').value,
+      'Status':          'New',
+      'SubmittedAt':     new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      });
+      if (!res.ok) throw new Error();
+      document.getElementById('applyForm').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+      window.scrollTo({ top: document.getElementById('apply').offsetTop - 80, behavior: 'smooth' });
+    } catch {
+      showToast('Something went wrong. Please try again.', true);
+      btn.disabled = false;
+      btn.textContent = 'Submit Application →';
+    }
+  });
+</script>
+</body>
+</html>
