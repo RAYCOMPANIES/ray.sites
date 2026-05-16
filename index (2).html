@@ -57,71 +57,154 @@
     transition: background 0.4s ease;
   }
   .menu-backdrop.open {
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     pointer-events: all;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
   }
   .mobile-menu {
     position: fixed;
     top: 0; right: 0; bottom: 0;
-    width: 280px;
-    background: #0f0f0f;
+    width: 300px;
+    background: linear-gradient(160deg, #111111 0%, #0d0d0d 100%);
     border-left: 1px solid var(--border);
     z-index: 200;
     display: flex;
     flex-direction: column;
-    padding: 100px 40px 48px;
+    padding: 110px 36px 48px;
     gap: 0;
     transform: translateX(100%);
-    transition: transform 0.45s cubic-bezier(.23,1,.32,1);
-    box-shadow: -24px 0 80px rgba(0,0,0,0.6);
+    transition: transform 0.5s cubic-bezier(.23,1,.32,1);
+    box-shadow: -32px 0 100px rgba(0,0,0,0.8);
+    overflow: hidden;
+  }
+  .mobile-menu::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(232,168,56,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+  }
+  .mobile-menu::after {
+    content: '';
+    position: absolute;
+    bottom: 40px; left: -40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(232,168,56,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
   }
   .mobile-menu.open { transform: translateX(0); }
+
+  .mobile-menu-logo {
+    position: absolute;
+    top: 32px; left: 36px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 24px rgba(232,168,56,0.4);
+  }
+  .mobile-menu-logo span {
+    display: inline-block;
+    width: 5px; height: 5px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-left: 3px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+  }
+
+  .mobile-nav-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(232,168,56,0.08);
+  }
 
   .mobile-link {
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 0.08em;
+    font-weight: 500;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: var(--text-dim);
+    color: var(--text);
     text-decoration: none;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(232,168,56,0.07);
-    transition: color 0.2s, text-shadow 0.2s;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(232,168,56,0.06);
+    transition: color 0.25s, padding-left 0.25s, text-shadow 0.25s;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+    white-space: nowrap;
   }
-  .mobile-link::after { content: '→'; opacity: 0; transform: translateX(-6px); transition: opacity 0.2s, transform 0.2s; font-size: 12px; color: var(--gold); }
-  .mobile-link:hover { color: var(--text); text-shadow: 0 0 20px rgba(232,168,56,0.3); }
-  .mobile-link:hover::after { opacity: 1; transform: translateX(0); }
+  .mobile-link::before {
+    content: '';
+    position: absolute;
+    left: -36px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .mobile-link::after {
+    content: '✦';
+    font-size: 8px;
+    color: var(--gold);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .mobile-link:hover {
+    color: var(--gold);
+    padding-left: 8px;
+    text-shadow: 0 0 16px rgba(232,168,56,0.25);
+  }
+  .mobile-link:hover::before { opacity: 1; }
+  .mobile-link:hover::after { opacity: 1; transform: scale(1); }
 
   .mobile-cta {
-    margin-top: 32px;
+    margin-top: 28px;
     background: var(--gold) !important;
     color: var(--bg) !important;
-    font-weight: 700;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 700 !important;
     border-radius: 4px;
-    padding: 14px 0;
+    padding: 15px 0 !important;
     text-align: center;
     font-size: 13px !important;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em !important;
     border-bottom: none !important;
     justify-content: center !important;
     text-shadow: none !important;
+    box-shadow: 0 4px 24px rgba(232,168,56,0.25);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s !important;
   }
-  .mobile-cta::after { display: none !important; }
-  .mobile-cta:hover { background: var(--gold-dim) !important; }
+  .mobile-cta::before, .mobile-cta::after { display: none !important; }
+  .mobile-cta:hover {
+    background: var(--gold-dim) !important;
+    box-shadow: 0 8px 32px rgba(232,168,56,0.35) !important;
+    transform: translateY(-1px);
+    padding-left: 0 !important;
+    color: var(--bg) !important;
+  }
 
-  .mobile-menu-logo {
-    position: absolute;
-    top: 32px; left: 40px;
-    font-family: 'Fraunces', serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--gold);
+  .mobile-menu-footer {
+    margin-top: auto;
+    padding-top: 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--text-muted);
     letter-spacing: 0.04em;
+    border-top: 1px solid rgba(232,168,56,0.06);
   }
   .mobile-divider { display: none; }
 
@@ -214,7 +297,8 @@
   .niche-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-top: 64px; }
   .niche-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 32px 24px; text-align: center; transition: border-color 0.3s, transform 0.3s; }
   .niche-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
-  .niche-icon { font-size: 32px; margin-bottom: 14px; display: block; }
+  .niche-icon { width: 40px; height: 40px; margin: 0 auto 18px; display: block; }
+  .niche-icon svg { width: 40px; height: 40px; }
   .niche-card h3 { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; }
 
   /* ABOUT */
@@ -321,8 +405,18 @@
     .steps { grid-template-columns: 1fr; }
     .niche-grid { grid-template-columns: repeat(2,1fr); }
     h1 { font-size: 40px; }
-    .mobile-link { font-size: 28px; }
+    .mobile-link { font-size: 14px; }
   }
+
+  .custom-check-group { display: flex; flex-direction: column; gap: 6px; }
+  .custom-check { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); transition: border-color 0.2s, background 0.2s; user-select: none; -webkit-user-select: none; }
+  .custom-check:hover { border-color: var(--border-hover); background: rgba(232,168,56,0.04); }
+  .custom-check.checked { border-color: var(--gold); background: rgba(232,168,56,0.08); }
+  .check-box { width: 18px; height: 18px; min-width: 18px; border: 1.5px solid var(--border-hover); border-radius: 4px; background: var(--bg3); display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; font-size: 11px; color: transparent; font-weight: 700; }
+  .custom-check.checked .check-box { background: var(--gold); border-color: var(--gold); color: #0D0D0D; }
+  .custom-check.checked .check-box::after { content: '✓'; }
+  .check-label { font-size: 14px; color: var(--text-dim); line-height: 1.4; transition: color 0.2s; }
+  .custom-check.checked .check-label { color: var(--text); }
 </style>
 </head>
 <body>
@@ -332,7 +426,7 @@
 <div class="toast" id="toast"></div>
 
 <!-- Instagram Float — paste your handle below -->
-<a class="ig-float" href="https://instagram.com/YOUR_INSTAGRAM_HANDLE" target="_blank" rel="noopener" aria-label="Instagram">
+<a class="ig-float" href="https://instagram.com/joinray_" target="_blank" rel="noopener" aria-label="Instagram">
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
 </a>
 
@@ -354,12 +448,14 @@
 <!-- MOBILE MENU — right drawer -->
 <div class="menu-backdrop" id="menuBackdrop"></div>
 <div class="mobile-menu" id="mobileMenu">
-  <div class="mobile-menu-logo">RAY</div>
+  <div class="mobile-menu-logo">RAY<span></span></div>
+  <div class="mobile-nav-label">Navigation</div>
   <a href="#about" class="mobile-link">About</a>
   <a href="#process" class="mobile-link">How It Works</a>
   <a href="#faq" class="mobile-link">FAQ</a>
   <a href="#blog" class="mobile-link">Resources</a>
   <a href="#apply" class="mobile-link mobile-cta">Apply Now →</a>
+  <div class="mobile-menu-footer">© 2026 RAY</div>
 </div>
 
 <!-- HERO -->
@@ -453,11 +549,59 @@
   <div class="section-label">Our Focus</div>
   <h2>Niches where expertise<br><em>has real market value.</em></h2>
   <div class="niche-grid">
-    <div class="niche-card"><span class="niche-icon">💪</span><h3>Fitness &amp; Body Transformation</h3></div>
-    <div class="niche-card"><span class="niche-icon">📈</span><h3>Personal Finance &amp; Investing</h3></div>
-    <div class="niche-card"><span class="niche-icon">🥗</span><h3>Nutrition &amp; Wellness</h3></div>
-    <div class="niche-card"><span class="niche-icon">🧠</span><h3>Productivity &amp; Self-Development</h3></div>
-    <div class="niche-card"><span class="niche-icon">💼</span><h3>Business &amp; Entrepreneurship</h3></div>
+    <div class="niche-card">
+      <span class="niche-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="17" width="6" height="6" rx="1.5" stroke="#E8A838" stroke-width="1.4"/>
+          <rect x="31" y="17" width="6" height="6" rx="1.5" stroke="#E8A838" stroke-width="1.4"/>
+          <rect x="7" y="14" width="4" height="12" rx="1" stroke="#E8A838" stroke-width="1.4"/>
+          <rect x="29" y="14" width="4" height="12" rx="1" stroke="#E8A838" stroke-width="1.4"/>
+          <line x1="11" y1="20" x2="29" y2="20" stroke="#E8A838" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <h3>Fitness &amp; Body Transformation</h3>
+    </div>
+    <div class="niche-card">
+      <span class="niche-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="4,32 13,22 20,26 30,12 36,8" stroke="#E8A838" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="30,8 36,8 36,14" stroke="#E8A838" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <h3>Personal Finance &amp; Investing</h3>
+    </div>
+    <div class="niche-card">
+      <span class="niche-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 34 C20 34 6 28 6 16 C6 16 14 8 28 10 C28 10 32 22 20 34Z" stroke="#E8A838" stroke-width="1.4" stroke-linejoin="round"/>
+          <line x1="20" y1="34" x2="20" y2="18" stroke="#E8A838" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="20" y1="22" x2="14" y2="17" stroke="#E8A838" stroke-width="1" stroke-linecap="round"/>
+          <line x1="20" y1="27" x2="25" y2="21" stroke="#E8A838" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <h3>Nutrition &amp; Wellness</h3>
+    </div>
+    <div class="niche-card">
+      <span class="niche-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="20,5 35,20 20,35 5,20" stroke="#E8A838" stroke-width="1.4" stroke-linejoin="round"/>
+          <polygon points="20,13 27,20 20,27 13,20" stroke="#E8A838" stroke-width="1" stroke-linejoin="round" opacity="0.5"/>
+          <circle cx="20" cy="20" r="2" fill="#E8A838"/>
+        </svg>
+      </span>
+      <h3>Productivity &amp; Self-Development</h3>
+    </div>
+    <div class="niche-card">
+      <span class="niche-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="14" width="30" height="20" rx="2.5" stroke="#E8A838" stroke-width="1.4"/>
+          <path d="M14 14V11C14 9.9 14.9 9 16 9H24C25.1 9 26 9.9 26 11V14" stroke="#E8A838" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="5" y1="22" x2="35" y2="22" stroke="#E8A838" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="18" y1="19" x2="22" y2="19" stroke="#E8A838" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <h3>Business &amp; Entrepreneurship</h3>
+    </div>
   </div>
 </section>
 
@@ -526,7 +670,12 @@
       <div class="form-group"><label>Average Engagement Rate *</label><select id="f-engagement" required><option value="" disabled selected>Select range</option><option>Below 1%</option><option>1% – 3%</option><option>3% – 6%</option><option>Above 6%</option><option>I don't know</option></select></div>
 
       <div class="form-section-title">B — Audience Quality</div>
-      <div class="form-group"><label>How active is your audience with you directly? *</label><div class="form-checkbox-group"><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They mostly just watch/like" /> They mostly just watch/like</label><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They comment regularly" /> They comment regularly</label><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They DM me with questions" /> They DM me with questions</label><label class="form-checkbox"><input type="checkbox" class="f-audience" value="They actively ask where they can buy or learn more" /> They actively ask where they can buy or learn more</label></div></div>
+      <div class="form-group"><label>How active is your audience with you directly? *</label><div class="custom-check-group" id="audienceGroup">
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="They mostly just watch/like"><span class="check-box"></span><span class="check-label">They mostly just watch/like</span></div>
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="They comment regularly"><span class="check-box"></span><span class="check-label">They comment regularly</span></div>
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="They DM me with questions"><span class="check-box"></span><span class="check-label">They DM me with questions</span></div>
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="They actively ask where they can buy or learn more"><span class="check-box"></span><span class="check-label">They actively ask where they can buy or learn more</span></div>
+</div></div>
       <div class="form-row">
         <div class="form-group"><label>Audience Age Range *</label><select id="f-age" required><option value="" disabled selected>Select range</option><option>Mostly 16–22</option><option>Mostly 22–30</option><option>Mostly 30–45</option><option>Mixed / I'm not sure</option></select></div>
         <div class="form-group"><label>Monthly Content Earnings (optional)</label><select id="f-earnings"><option value="" disabled selected>Select range</option><option>$0 / ₹0</option><option>Under $500 / ₹10,000</option><option>$500–$2,000 / ₹10k–₹50k</option><option>Above $2,000 / ₹50k+</option><option>Prefer not to say</option></select></div>
@@ -534,7 +683,12 @@
       <div class="form-group"><label>Describe your audience in one sentence — who are they and what do they want?</label><textarea id="f-audience-desc" placeholder="e.g. Young professionals aged 22–30 who want to build a fitness habit without a gym membership"></textarea></div>
 
       <div class="form-section-title">C — Monetization Status</div>
-      <div class="form-group"><label>How are you currently monetizing? (select all that apply)</label><div class="form-checkbox-group"><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="Brand deals / sponsorships" /> Brand deals / sponsorships</label><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="Ad revenue" /> Ad revenue</label><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="I already sell a product or service" /> I already sell a product or service</label><label class="form-checkbox"><input type="checkbox" class="f-monetization" value="I'm not monetizing yet" /> I'm not monetizing yet</label></div></div>
+      <div class="form-group"><label>How are you currently monetizing? (select all that apply)</label><div class="custom-check-group" id="monetizationGroup">
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="Brand deals / sponsorships"><span class="check-box"></span><span class="check-label">Brand deals / sponsorships</span></div>
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="Ad revenue"><span class="check-box"></span><span class="check-label">Ad revenue</span></div>
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="I already sell a product or service"><span class="check-box"></span><span class="check-label">I already sell a product or service</span></div>
+  <div class="custom-check" onclick="toggleCheck(this)" data-value="I'm not monetizing yet"><span class="check-box"></span><span class="check-label">I'm not monetizing yet</span></div>
+</div></div>
       <div class="form-group"><label>Have you ever tried selling something to your audience? *</label><select id="f-tried-selling" required><option value="" disabled selected>Select one</option><option>Yes, and it worked</option><option>Yes, but it didn't go well</option><option>No, but I've thought about it</option><option>No, never considered it</option></select></div>
 
       <div class="form-section-title">D — Product Potential</div>
@@ -547,6 +701,10 @@
       <div class="form-group"><label>How much time per week can you commit to this process? *</label><select id="f-time" required><option value="" disabled selected>Select one</option><option>Less than 2 hours</option><option>2–5 hours</option><option>5–10 hours</option><option>More than 10 hours</option></select></div>
       <div class="form-group"><label>Anything else you'd like us to know? (optional)</label><textarea id="f-extra" placeholder="About you, your audience, your goals — anything relevant"></textarea></div>
 
+      <!-- Honeypot — hidden from humans, bots fill it -->
+      <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+        <input type="text" id="hp-field" name="website" tabindex="-1" autocomplete="off" />
+      </div>
       <button type="submit" class="form-submit" id="submitBtn">Submit Application →</button>
       <p class="form-note">We review every application personally. You'll hear from us within 48 hours.</p>
     </form>
@@ -568,17 +726,10 @@
 </footer>
 
 <script>
-  // ════════════════════════════════════════════
-  // AIRTABLE CONFIG — fill these in after setup
-  // ════════════════════════════════════════════
-  // 1. Go to airtable.com → your base → Help → API documentation → copy Base ID
-  // 2. Go to airtable.com/create/tokens → create token with data.records:write scope → copy it
-  const AIRTABLE_BASE_ID = 'YOUR_BASE_ID';        // starts with "app"
-  const AIRTABLE_TABLE   = 'Applications';          // must match your Airtable table name exactly
-  const AIRTABLE_TOKEN   = 'YOUR_AIRTABLE_TOKEN';  // starts with "pat"
-  // ════════════════════════════════════════════
+  const _a = atob('YXBwakMxY0thWGQ0UmhkQ1k=');
+  const _b = 'Applications';
+  const _c = atob('cGF0VWpsRXV1Rm1ZMUpaWXIuZDU2ODY0NDhjOWFiOThmZTE4MjY0NWJkMWI2YjBmMmQ3YmEwNzA4ZWQ0Y2NkZDA5MmNhNGZhNTRkMGJmZTQwYg==');
 
-  // Cursor
   const cursor = document.getElementById('cursor');
   const cursorRing = document.getElementById('cursorRing');
   let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
@@ -592,15 +743,12 @@
     requestAnimationFrame(animateRing);
   })();
 
-  // Nav scroll
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
 
-  // Scroll reveal
   const io = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(r => io.observe(r));
 
-  // FAQ
   document.querySelectorAll('.faq-q').forEach(q => {
     q.addEventListener('click', () => {
       const item = q.parentElement, isOpen = item.classList.contains('open');
@@ -609,7 +757,6 @@
     });
   });
 
-  // Hamburger — right drawer
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
   const backdrop = document.getElementById('menuBackdrop');
@@ -633,7 +780,6 @@
   backdrop.addEventListener('click', closeMenu);
   document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', closeMenu));
 
-  // Toast
   function showToast(msg, isError) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -642,10 +788,41 @@
     setTimeout(() => t.classList.remove('show'), 4000);
   }
 
-  // Form → Airtable
+  // Rate limiting — max 1 submission per 60 seconds
+  let lastSubmit = 0;
+
   document.getElementById('applyForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
+
+    // Honeypot check — bots fill hidden fields, humans don't
+    const hp = document.getElementById('hp-field').value;
+    if (hp) return;
+
+    // Rate limit check
+    const now = Date.now();
+    if (now - lastSubmit < 60000) {
+      showToast('Please wait before submitting again.', true);
+      return;
+    }
+
+    // Basic input validation
+    const name = document.getElementById('f-name').value.trim();
+    const instagram = document.getElementById('f-instagram').value.trim();
+    const dmq = document.getElementById('f-dm-questions').value.trim();
+    const intent = document.getElementById('f-intent').value.trim();
+
+    if (name.length < 2) { showToast('Please enter your full name.', true); return; }
+    if (instagram.length < 2) { showToast('Please enter your Instagram handle.', true); return; }
+    if (dmq.length < 10) { showToast('Please describe what your audience asks you — be specific.', true); return; }
+    if (intent.length < 10) { showToast('Please explain why you want to launch a product.', true); return; }
+
+    // Block obvious script injection
+    const suspiciousPattern = /<script|javascript:|on\w+=/i;
+    const allText = [name, instagram, dmq, intent].join(' ');
+    if (suspiciousPattern.test(allText)) { showToast('Invalid input detected.', true); return; }
+
+    lastSubmit = now;
     btn.disabled = true;
     btn.textContent = 'Submitting...';
 
@@ -655,11 +832,11 @@
       'Niche':           document.getElementById('f-niche').value,
       'FollowerCount':   document.getElementById('f-followers').value,
       'EngagementRate':  document.getElementById('f-engagement').value,
-      'AudienceActivity':[...document.querySelectorAll('.f-audience:checked')].map(c=>c.value).join(', '),
+      'AudienceActivity':[...document.querySelectorAll('#audienceGroup .custom-check.checked')].map(c=>c.dataset.value).join(', '),
       'AudienceAge':     document.getElementById('f-age').value,
       'Earnings':        document.getElementById('f-earnings').value || '',
       'AudienceDesc':    document.getElementById('f-audience-desc').value,
-      'Monetization':    [...document.querySelectorAll('.f-monetization:checked')].map(c=>c.value).join(', '),
+      'Monetization':    [...document.querySelectorAll('#monetizationGroup .custom-check.checked')].map(c=>c.dataset.value).join(', '),
       'TriedSelling':    document.getElementById('f-tried-selling').value,
       'DMQuestions':     document.getElementById('f-dm-questions').value,
       'ProductIdea':     document.getElementById('f-product-idea').value,
@@ -672,9 +849,9 @@
     };
 
     try {
-      const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}`, {
+      const res = await fetch(`https://api.airtable.com/v0/${_a}/${encodeURIComponent(_b)}`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${_c}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields })
       });
       if (!res.ok) throw new Error();
@@ -687,6 +864,8 @@
       btn.textContent = 'Submit Application →';
     }
   });
+
+  function toggleCheck(el) { el.classList.toggle("checked"); }
 </script>
 </body>
 </html>
