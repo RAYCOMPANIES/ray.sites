@@ -726,9 +726,7 @@
 </footer>
 
 <script>
-  const _a = atob('YXBwakMxY0thWGQ0UmhkQ1k=');
-  const _b = 'Applications';
-  const _c = atob('cGF0a3JUMFBWSWRyWnl6dHIuZGM2YWQ1ZjdkOGI5MDAzYzAxNmE4YTAxZWU1NDdjZDg4N2M1YjJiN2I2NzYzMTFkZTFjZWI2ZWVlOWQzZjFiZQ==');
+  const WORKER_URL = 'https://ray-airtable.thakuryashsingh127.workers.dev';
 
   const cursor = document.getElementById('cursor');
   const cursorRing = document.getElementById('cursorRing');
@@ -849,10 +847,10 @@
     };
 
     try {
-      const res = await fetch(`https://api.airtable.com/v0/${_a}/${encodeURIComponent(_b)}`, {
+      const res = await fetch(WORKER_URL, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${_c}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields)
       });
       if (!res.ok) throw new Error();
       document.getElementById('applyForm').style.display = 'none';
